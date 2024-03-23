@@ -1,0 +1,25 @@
+.code-editor {
+  font-family: Source Code Pro, ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, Liberation Mono, Courier New, monospace;
+  font-size: 13.6px;
+  line-height: 24px;
+  padding: 18px 0;
+  -webkit-font-smoothing: auto;
+}
+
+pre {
+  background-color: ghostwhite;
+  border: 1px solid silver;
+  padding: 10px 20px;
+  margin: 20px;
+  background-color: #16181d;
+}
+.json-key {
+  color: #dededf;
+}
+.json-value {
+  color: #75bcaf;
+}
+.json-string {
+  color: #947444;
+}

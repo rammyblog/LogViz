@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"path"
+	"runtime"
 	"strings"
 	"text/template"
 	"time"
@@ -98,9 +100,11 @@ func (config Config) Serve(port string) error {
 
 	server := http.NewServeMux()
 
-	fs := http.FileServer(http.Dir("static"))
+	// Honest to God, I don't know why the usual static serving is not working https://github.com/rammyblog/spendwise/blob/90b9239e97f4500e580fecb062dd3553af725cde/router.go#L28C1-L30C43
+	_, filename, _, _ := runtime.Caller(0)
+	fileServer := http.FileServer(http.Dir(path.Dir(filename) + "/templates/static/"))
+	server.Handle("/static/", http.StripPrefix("/static", fileServer))
 
-	server.Handle("/static/", http.StripPrefix("/static/", fs))
 	server.HandleFunc("/", config.home)
 	server.HandleFunc("/logs", config.Logs)
 
@@ -155,9 +159,10 @@ func (config Config) Logs(w http.ResponseWriter, r *http.Request) {
 	// }
 
 	request.Limit(20).Order("id desc").Find(&req)
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(200)
 
 	_ = json.NewEncoder(w).Encode(&req)
-
 }
 
 func (config Config) serveWs(w http.ResponseWriter, r *http.Request) {
@@ -313,7 +318,7 @@ func render(w http.ResponseWriter, t string, data interface{}) {
 		return
 	}
 
-	if err := tmpl.Execute(w, data); err != nil {
+	if err := tmpl.ExecuteTemplate(w, "index.html", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

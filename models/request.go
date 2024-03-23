@@ -1,11 +1,7 @@
 package models
 
-import (
-	"gorm.io/gorm"
-)
-
 type Request struct {
-	gorm.Model
+	Model
 	ResponseBody    string  `gorm:"type:text;" json:"response_body"`
 	ResponseStatus  int     `gorm:"type:integer;" json:"code"`
 	ResponseHeaders string  `gorm:"type:text;" json:"response_headers"`
