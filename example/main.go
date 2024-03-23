@@ -1,23 +1,45 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/rammyblog/logviz"
 )
 
 // Example handler
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Hello, World!"))
+	w.WriteHeader(http.StatusBadGateway)
+	w.Write([]byte("Yes world!"))
+}
+
+func SecondHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(http.StatusBadGateway)
+	w.Write([]byte("second gandler"))
 }
 
 func main() {
 	// Create a new ServeMux
 	mux := http.NewServeMux()
 
+	reqLogger, err := logviz.Init("postgres", logviz.DbConfig{
+		DbUser:     "postgres",
+		DbPassword: "password",
+		DbHost:     "localhost",
+		DbName:     "logviz",
+		DbPort:     "5429",
+	})
+
+	if err != nil {
+		fmt.Println(err)
+	}
+	reqLogger.Serve(":5009")
 	// Register the Logger middleware
-	// mux.Handle("/", logviz.Logger(http.HandlerFunc(HelloHandler)))
+	mux.Handle("/", reqLogger.Logger(http.HandlerFunc(HelloHandler)))
+	mux.Handle("/rammy", reqLogger.Logger(http.HandlerFunc(SecondHandler)))
 
 	// Start the server
 	log.Println("Server started on :8080")

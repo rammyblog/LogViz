@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <script src="/static/js/logs.js"></script>
+
+    <title>LogViz</title>
+  </head>
+  <body class="container">
+    <table class="table table-striped table-hover">
+      <caption>
+        HTTP request logs
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">Method</th>
+          <th scope="col">Path</th>
+          <th scope="col">IP Address</th>
+          <th scope="col">Status</th>
+          <th scope="col">Time Ago</th>
+          <th scope="col">Details</th>
+        </tr>
+      </thead>
+      <tbody x-data="logsApp()" x-init="logsApp.init()">
+        <template x-for="log in logs" :key="log.id">
+          <tr>
+            <td x-text="log.Method"></td>
+            <td x-text="log.path"></td>
+            <td x-text="log.ipaddress"></td>
+            <td>
+              <span
+                x-text="log.responseStatus"
+                :class="{
+                  'badge text-bg-success': log.responseStatus === 200,
+                  'badge text-bg-warning': log.responseStatus >= 400,
+                  'badge text-bg-danger': log.responseStatus >= 500,
+                  'badge text-bg-secondary': log.responseStatus < 200 || log.responseStatus >= 300
+                }"
+              ></span>
+            </td>
+            <td x-text="log.CreatedAt"></td>
+            <td><button type="button">View</button></td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <!-- Include moment.js for timestamp conversion -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var timestamps = document.querySelectorAll('.timestamp');
+        timestamps.forEach(function (element) {
+          var timestamp = element.textContent.trim();
+          var timeAgo = moment.utc(timestamp, 'YYYY-MM-DD HH:mm:ss').fromNow();
+          element.textContent = timeAgo;
+        });
+      });
+
+      let mode;
+      function fetchLogs() {
+        return fetch('/logs')
+          .then((response) => response.json())
+          .then((data) => {
+            if (data && Array.isArray(data)) {
+              // Set the fetched log data to Alpine.js reactive data
+              return data;
+            }
+          })
+          .catch((error) => {
+            console.error('Error fetching logs:', error);
+          });
+      }
+
+      if (location.protocol != 'https:') {
+        mode = 'ws';
+      } else {
+        mode = 'wss';
+      }
+
+      // Handle ws
+      const socket = new WebSocket(
+        mode + '://' + document.location.host + '/ws'
+      );
+
+      socket.addEventListener('message', (event) => {
+        const data = JSON.parse(event.data);
+        console.log(data);
+      });
+    </script>
+  </body>
+</html>
