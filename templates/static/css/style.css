@@ -8,7 +8,7 @@
 }
 
 pre {
-  background-color: ghostwhite;
+  color: ghostwhite;
   border: 1px solid silver;
   padding: 10px 20px;
   margin: 20px;
@@ -18,8 +18,12 @@ pre {
   color: #dededf;
 }
 .json-value {
-  color: #75bcaf;
+  color: #6ea9c7;
 }
 .json-string {
   color: #947444;
 }
+/* #endofpage {
+  position: absolute;
+  bottom: 0;
+} */

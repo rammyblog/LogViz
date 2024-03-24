@@ -12,7 +12,6 @@ document.addEventListener('alpine:init', () => {
 
   socket.addEventListener('message', (event) => {
     const data = JSON.parse(event.data);
-    console.log('Received:', data);
     Alpine.store('state').addToLogs(data);
   });
 

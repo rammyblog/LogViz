@@ -12,8 +12,18 @@
     <link href="static/css/style.css" rel="stylesheet" />
     <script
       defer
+      src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"
+    ></script>
+
+    <script
+      defer
       src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
     ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+
     <script src="static/js/store.js"></script>
     <script src="static/js/pretty-print.js"></script>
 
@@ -29,7 +39,7 @@
     }"
       x-text="$store.state.live ? 'On' : 'Off'"
     ></span>
-    <table class="table table-striped table-hover">
+    <table id="request-table" class="table table-striped table-hover">
       <caption>
         HTTP request logs
       </caption>
@@ -43,7 +53,7 @@
           <th scope="col">Details</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="logs-records">
         <template x-for="log in $store.state.data" :key="log.id">
           <tr>
             <td x-text="log.method"></td>
@@ -76,6 +86,7 @@
         </template>
       </tbody>
     </table>
+    <div x-show="$store.state.isLoading">Loading...</div>
     <!-- Modal -->
     <div
       class="modal fade"
@@ -237,6 +248,43 @@
           var timeAgo = moment.utc(timestamp, 'YYYY-MM-DD HH:mm:ss').fromNow();
           element.textContent = timeAgo;
         });
+      });
+
+      // Check if the user has scrolled to the bottom of the window
+      function isBottomOfPage() {
+        // Get the height of the document
+        const docHeight = Math.max(
+          document.body.scrollHeight,
+          document.documentElement.scrollHeight,
+          document.body.offsetHeight,
+          document.documentElement.offsetHeight,
+          document.body.clientHeight,
+          document.documentElement.clientHeight
+        );
+
+        // Get the current scroll position
+        const scrollTop =
+          window.pageYOffset ||
+          document.documentElement.scrollTop ||
+          document.body.scrollTop;
+
+        // Get the height of the viewport
+        const viewportHeight =
+          window.innerHeight ||
+          document.documentElement.clientHeight ||
+          document.body.clientHeight;
+
+        // Check if we are at the bottom of the page
+        return docHeight - scrollTop <= viewportHeight;
+      }
+
+      // Example usage:
+      window.addEventListener('scroll', function () {
+        if (isBottomOfPage()) {
+          console.log('You have reached the bottom of the page!');
+          // Perform actions such as loading more data
+          Alpine.store('state').loadMore();
+        }
       });
     </script>
   </body>

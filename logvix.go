@@ -137,7 +137,7 @@ func (config Config) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (config Config) Logs(w http.ResponseWriter, r *http.Request) {
-	// lastID := r.URL.Query().Get("lastID")
+	lastID := r.URL.Query().Get("lastId")
 	method := r.URL.Query().Get("method")
 
 	var req []models.Request
@@ -152,13 +152,13 @@ func (config Config) Logs(w http.ResponseWriter, r *http.Request) {
 		method = "%"
 	}
 
-	// if lastID == "0" {
-	// 	request.Limit(20).Order("id desc").Where("method LIKE ?", method).Find(&req)
-	// } else {
-	// 	request.Limit(20).Order("id desc").Where("id < ? AND method LIKE ?", lastID, method).Find(&req)
-	// }
+	if lastID == "0" {
+		request.Limit(20).Order("id desc").Find(&req)
+	} else {
+		request.Limit(20).Order("id desc").Where("id < ? ", lastID).Find(&req)
+	}
 
-	request.Limit(20).Order("id desc").Find(&req)
+	// request.Limit(20).Order("id desc").Find(&req)
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(200)
 

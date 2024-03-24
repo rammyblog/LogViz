@@ -12,7 +12,7 @@ import (
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusBadGateway)
-	w.Write([]byte("Yes world!"))
+	w.Write([]byte("Desewa, Aduke Ade"))
 }
 
 func SecondHandler(w http.ResponseWriter, r *http.Request) {
