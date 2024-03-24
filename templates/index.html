@@ -140,8 +140,9 @@
       </div>
       <input
         type="text"
-        @keyup.enter="$store.state.searchLogs(this)"
+        @keyup.enter="$store.state.searchLogs($event.target.value)"
         class="form-control"
+        x-bind:disabled="!$store.state.validSearchBy.includes($store.state.searchBy)"
         aria-label="Text input with dropdown button"
         x-show="!$store.state.isMethodTypeOpen"
       />
@@ -369,6 +370,13 @@
             </button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="position-relative">
+      <div class="position-absolute top-0 start-50 translate-middle">
+        Built with 💓 By
+        <a href="https://tundeonasanya.dev/">Babatunde Onasanya</a>
       </div>
     </div>
 

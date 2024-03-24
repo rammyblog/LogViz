@@ -6,6 +6,7 @@ document.addEventListener('alpine:init', () => {
     live: false,
     data: [],
     searchBy: 'Search By',
+    searchTerm: '',
     methodType: 'Select Method',
     isMethodTypeOpen: false,
     isLoading: false,
@@ -20,15 +21,15 @@ document.addEventListener('alpine:init', () => {
     addToLogs: function (log) {
       this.data.unshift(log);
     },
+    validSearchBy: ['Path', 'Code', 'Ip Address', 'Method'],
 
     searchLogs: function (searchTerm) {
-      console.log(searchTerm)
-      const validSearchBy = ['Path', 'Code', 'Ip Address', 'Method'];
       this.isLoading = true;
-      if (!validSearchBy.includes(this.searchBy)) {
+      if (!this.validSearchBy.includes(this.searchBy)) {
         this.isLoading = false;
         return;
       }
+      this.searchTerm = searchTerm;
       fetch(
         '/logs?searchBy=' +
           this.searchBy +
@@ -47,7 +48,14 @@ document.addEventListener('alpine:init', () => {
       this.isLoading = true;
       const lastItem = this.data[this.data.length - 1];
       const lastId = lastItem ? lastItem.id : '0';
-      fetch('/logs?lastId=' + lastId)
+      fetch(
+        '/logs?lastId=' +
+          lastId +
+          '&searchBy=' +
+          this.searchBy +
+          '&searchTerm=' +
+          this.searchTerm
+      )
         .then((response) => response.json())
         .then((data) => {
           if (data.length === 0) {
