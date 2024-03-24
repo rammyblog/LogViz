@@ -22,13 +22,20 @@ document.addEventListener('alpine:init', () => {
     },
 
     searchLogs: function (searchTerm) {
+      console.log(searchTerm)
       const validSearchBy = ['Path', 'Code', 'Ip Address', 'Method'];
       this.isLoading = true;
       if (!validSearchBy.includes(this.searchBy)) {
         this.isLoading = false;
         return;
       }
-      fetch('/logs?searchBy=' + this.searchBy + '&searchTerm=' + searchTerm)
+      fetch(
+        '/logs?searchBy=' +
+          this.searchBy +
+          '&searchTerm=' +
+          searchTerm +
+          '&lastId=0'
+      )
         .then((response) => response.json())
         .then((data) => {
           this.data = data;
@@ -51,7 +58,6 @@ document.addEventListener('alpine:init', () => {
           this.isLoading = false;
         });
     },
-
     toggleLive: function () {
       this.live = !this.live;
     },
@@ -69,6 +75,7 @@ document.addEventListener('alpine:init', () => {
     },
     toggleMethodType: function (methodType) {
       this.methodType = methodType;
+      this.searchLogs(methodType);
     },
   });
 });

@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"path"
 	"runtime"
+	"strconv"
 	"strings"
 	"text/template"
 	"time"
@@ -33,6 +34,14 @@ type Config struct {
 	Dsn      string
 	DbType   string
 	LoginKey string
+}
+
+var METHODS = map[string]string{
+	"get":    "GET",
+	"post":   "POST",
+	"delete": "DELETE",
+	"option": "OPTION",
+	"put":    "PUT",
 }
 
 var (
@@ -138,27 +147,43 @@ func (config Config) home(w http.ResponseWriter, r *http.Request) {
 
 func (config Config) Logs(w http.ResponseWriter, r *http.Request) {
 	lastID := r.URL.Query().Get("lastId")
-	method := r.URL.Query().Get("method")
+	searchBy := r.URL.Query().Get("searchBy")
+	searchTerm := r.URL.Query().Get("searchTerm")
+	var path, method, ipAddress string
+	var code int
+
+	switch searchBy {
+	case "Path":
+		path = searchTerm
+	case "Code":
+		// convert to int
+		intCode, err := strconv.Atoi(searchTerm)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		code = intCode
+	case "Method":
+		method = METHODS[strings.ToLower(searchTerm)]
+	case "Ip Address":
+		ipAddress = searchTerm
+	}
 
 	var req []models.Request
 
 	request, err := connectDb(config)
 
 	if err != nil {
-		_ = fmt.Errorf("%v", err)
+		fmt.Println(err)
 	}
+	query := request.Limit(20).Order("id desc")
 
-	if method == "" {
-		method = "%"
+	if lastID != "0" {
+		query.Where("id < ?", lastID)
 	}
+	query.Where(&models.Request{ResponseStatus: code, Path: path, Method: method, Ipaddress: ipAddress})
 
-	if lastID == "0" {
-		request.Limit(20).Order("id desc").Find(&req)
-	} else {
-		request.Limit(20).Order("id desc").Where("id < ? ", lastID).Find(&req)
-	}
-
-	// request.Limit(20).Order("id desc").Find(&req)
+	query.Find(&req)
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(200)
 

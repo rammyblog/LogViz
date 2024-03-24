@@ -21,10 +21,6 @@
       defer
       src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
     ></script>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-    />
 
     <script src="static/js/store.js"></script>
     <script src="static/js/pretty-print.js"></script>
@@ -144,6 +140,7 @@
       </div>
       <input
         type="text"
+        @keyup.enter="$store.state.searchLogs(this)"
         class="form-control"
         aria-label="Text input with dropdown button"
         x-show="!$store.state.isMethodTypeOpen"
