@@ -5,6 +5,9 @@ document.addEventListener('alpine:init', () => {
     },
     live: false,
     data: [],
+    searchBy: 'Search By',
+    methodType: 'Select Method',
+    isMethodTypeOpen: false,
     isLoading: false,
     currentLog: {},
     fetchLogs: function () {
@@ -16,6 +19,21 @@ document.addEventListener('alpine:init', () => {
     },
     addToLogs: function (log) {
       this.data.unshift(log);
+    },
+
+    searchLogs: function (searchTerm) {
+      const validSearchBy = ['Path', 'Code', 'Ip Address', 'Method'];
+      this.isLoading = true;
+      if (!validSearchBy.includes(this.searchBy)) {
+        this.isLoading = false;
+        return;
+      }
+      fetch('/logs?searchBy=' + this.searchBy + '&searchTerm=' + searchTerm)
+        .then((response) => response.json())
+        .then((data) => {
+          this.data = data;
+          this.isLoading = false;
+        });
     },
 
     loadMore: function () {
@@ -39,6 +57,18 @@ document.addEventListener('alpine:init', () => {
     },
     selectLog: function (id) {
       this.currentLog = this.data.find((log) => log.id === id);
+    },
+    toggleSearchBy: function (searchBy) {
+      if (searchBy === 'Method') {
+        this.isMethodTypeOpen = !this.isMethodTypeOpen;
+        this.searchBy = searchBy;
+        return;
+      }
+      this.isMethodTypeOpen = false;
+      this.searchBy = searchBy;
+    },
+    toggleMethodType: function (methodType) {
+      this.methodType = methodType;
     },
   });
 });

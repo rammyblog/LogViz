@@ -241,7 +241,7 @@ func (config Config) Logger(next http.Handler) http.Handler {
 			Method:          r.Method,
 			Host:            r.Host,
 			Ipaddress:       getClientIP(r),
-			TimeSpent:       float64(duration),
+			TimeSpent:       float64(duration.Milliseconds()),
 		}
 
 		err = db.Create(req).Error
@@ -265,9 +265,10 @@ type responseWriterProxy struct {
 	buf    *bytes.Buffer
 }
 
-// WriteHeader intercepts and stores the status code
+// // WriteHeader intercepts and stores the status code
 func (w *responseWriterProxy) WriteHeader(code int) {
 	w.status = code
+	w.ResponseWriter.WriteHeader(code)
 }
 
 // Write intercepts and stores the status code and response body
@@ -294,6 +295,11 @@ func getClientIP(r *http.Request) string {
 		parts := strings.Split(forwardedFor, ",")
 		return strings.TrimSpace(parts[0])
 	}
+
+	if strings.Contains(r.RemoteAddr, "[::1]") {
+		return "127.0.0.1"
+	}
+
 	// If neither header exists, fallback to using the RemoteAddr field
 	return strings.Split(r.RemoteAddr, ":")[0]
 }

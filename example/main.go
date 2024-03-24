@@ -11,6 +11,7 @@ import (
 // Example handler
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
+	// time.Sleep(2.455 * time.Millisecond)
 	w.WriteHeader(http.StatusBadGateway)
 	w.Write([]byte("Desewa, Aduke Ade"))
 }

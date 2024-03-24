@@ -9,6 +9,12 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Wix+Madefor+Text:ital,wght@0,400..800;1,400..800&display=swap"
+      rel="stylesheet"
+    />
     <link href="static/css/style.css" rel="stylesheet" />
 
     <script
@@ -25,16 +31,137 @@
 
     <title>LogViz</title>
   </head>
-  <body class="container" x-data x-init="$store.state.init()">
-    Live:
-    <span
-      :class="{
-      'badge text-bg-success': $store.state.live,
-      'badge text-bg-danger': !$store.state.live
-    
-    }"
-      x-text="$store.state.live ? 'On' : 'Off'"
-    ></span>
+  <body class="container" x-cloak x-data x-init="$store.state.init()">
+    <a href="https://github.com/rammyblog/LogVix"
+      ><img
+        class="img-fluid logo"
+        src="static/img/logo.png"
+        alt="LogViz"
+        class="logo"
+    /></a>
+    <div class="input-group mb-3 w-25">
+      <button
+        class="btn btn-outline-secondary dropdown-toggle"
+        type="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+        id="dropdownMenuButton"
+        x-text="$store.state.searchBy"
+      ></button>
+      <ul class="dropdown-menu">
+        <li>
+          <a
+            id="search-method"
+            x-on:click="$store.state.toggleSearchBy('Method')"
+            class="dropdown-item"
+            href="#"
+            >Method</a
+          >
+        </li>
+        <li>
+          <a
+            id="search-path"
+            x-on:click="$store.state.toggleSearchBy('Path')"
+            class="dropdown-item"
+            href="#"
+            >Path</a
+          >
+        </li>
+        <li>
+          <a
+            id="search-code"
+            x-on:click="$store.state.toggleSearchBy('Code')"
+            class="dropdown-item"
+            href="#"
+            >Code</a
+          >
+        </li>
+        <li>
+          <a
+            x-on:click="$store.state.toggleSearchBy('Ip Address')"
+            id="search-address"
+            class="dropdown-item"
+            href="#"
+            >Ip Address</a
+          >
+        </li>
+      </ul>
+
+      <div x-show="$store.state.isMethodTypeOpen" class="dropdown mx-2">
+        <button
+          class="btn btn-info dropdown-toggle"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          x-text="$store.state.methodType"
+        ></button>
+        <ul id="method-menu" class="dropdown-menu">
+          <li>
+            <a
+              id="get-method"
+              x-on:click="$store.state.toggleMethodType('GET')"
+              class="dropdown-item"
+              href="#"
+              >GET</a
+            >
+          </li>
+          <li>
+            <a
+              id="post-method"
+              x-on:click="$store.state.toggleMethodType('POST')"
+              class="dropdown-item"
+              href="#"
+              >POST</a
+            >
+          </li>
+          <li>
+            <a
+              id="delete-method"
+              x-on:click="$store.state.toggleMethodType('DELETE')"
+              class="dropdown-item"
+              href="#"
+              >DELETE</a
+            >
+          </li>
+          <li>
+            <a
+              x-on:click="$store.state.toggleMethodType('PUT')"
+              id="put-method"
+              class="dropdown-item"
+              href="#"
+              >PUT</a
+            >
+          </li>
+          <li>
+            <a
+              x-on:click="$store.state.toggleMethodType('OPTION')"
+              id="option-method"
+              class="dropdown-item"
+              href="#"
+              >OPTION</a
+            >
+          </li>
+        </ul>
+      </div>
+      <input
+        type="text"
+        class="form-control"
+        aria-label="Text input with dropdown button"
+        x-show="!$store.state.isMethodTypeOpen"
+      />
+    </div>
+
+    <div>
+      Live:
+      <span
+        :class="{
+        'badge text-bg-success': $store.state.live,
+        'badge text-bg-danger': !$store.state.live
+      
+      }"
+        x-text="$store.state.live ? 'On' : 'Off'"
+      ></span>
+    </div>
+
     <table id="request-table" class="table table-striped table-hover">
       <caption>
         HTTP request logs
@@ -45,6 +172,7 @@
           <th scope="col">Path</th>
           <th scope="col">IP Address</th>
           <th scope="col">Status</th>
+          <th scope="col">Time Taken</th>
           <th scope="col">Time Ago</th>
           <th scope="col">Details</th>
         </tr>
@@ -66,7 +194,11 @@
                 }"
               ></span>
             </td>
-            <td x-text="log.created_at"></td>
+            <td><span x-text="log.time_spent"> </span> ms</td>
+            <td
+              class="timestamp"
+              x-text=" moment(log.created_at, 'YYYY-MM-DD HH:mm:ss').fromNow()"
+            ></td>
             <td>
               <button
                 type="button"
@@ -105,6 +237,24 @@
             ></button>
           </div>
           <div class="modal-body">
+            <div class="request-details container p-4">
+              <p>Host: <span x-text="$store.state.currentLog.host"></span></p>
+              <p>
+                Method: <span x-text="$store.state.currentLog.method"></span>
+              </p>
+              <p>
+                Status: <span x-text="$store.state.currentLog.status"></span>
+              </p>
+              <p>Path: <span x-text="$store.state.currentLog.path"></span></p>
+              <p>
+                IP Address:
+                <span x-text="$store.state.currentLog.ip_address"></span>
+              </p>
+              <p>
+                Time Taken:
+                <span x-text="$store.state.currentLog.time_spent"></span> ms
+              </p>
+            </div>
             <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
               <li class="nav-item" role="presentation">
                 <button
@@ -236,15 +386,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        var timestamps = document.querySelectorAll('.timestamp');
-        timestamps.forEach(function (element) {
-          var timestamp = element.textContent.trim();
-          var timeAgo = moment.utc(timestamp, 'YYYY-MM-DD HH:mm:ss').fromNow();
-          element.textContent = timeAgo;
-        });
-      });
-
       // Check if the user has scrolled to the bottom of the window
       function isBottomOfPage() {
         // Get the height of the document

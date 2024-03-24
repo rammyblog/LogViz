@@ -1,3 +1,9 @@
+body {
+  font-family: 'Wix Madefor Text', sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
 .code-editor {
   font-family: Source Code Pro, ui-monospace, SFMono-Regular, Menlo, Monaco,
     Consolas, Liberation Mono, Courier New, monospace;
@@ -23,7 +29,14 @@ pre {
 .json-string {
   color: #947444;
 }
-/* #endofpage {
-  position: absolute;
-  bottom: 0;
-} */
+
+.logo {
+  width: 150px;
+  height: 150px;
+  position: relative;
+  right: 24px;
+}
+
+[x-cloak] {
+  display: none !important;
+}
