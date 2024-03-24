@@ -139,7 +139,6 @@ func (config Config) home(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	// get the last 10 logs
 	db.Order("created_at desc").Limit(10).Find(&logs)
 
 	render(w, "index.html", nil)
@@ -176,7 +175,7 @@ func (config Config) Logs(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	query := request.Limit(20).Order("id desc")
+	query := request.Limit(10).Order("id desc")
 
 	if lastID != "0" {
 		query.Where("id < ?", lastID)
@@ -329,19 +328,15 @@ func getClientIP(r *http.Request) string {
 	return strings.Split(r.RemoteAddr, ":")[0]
 }
 
+
+
 //go:embed templates
 var templateFS embed.FS
 
 func render(w http.ResponseWriter, t string, data interface{}) {
 
-	// partials := []string{}
-
 	var templateSlice []string
 	templateSlice = append(templateSlice, fmt.Sprintf("templates/%s", t))
-
-	// for _, x := range partials {
-	// 	templateSlice = append(templateSlice, x)
-	// }
 
 	tmpl, err := template.ParseFS(templateFS, templateSlice...)
 	if err != nil {

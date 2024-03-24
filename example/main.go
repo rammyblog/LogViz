@@ -19,7 +19,7 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 func SecondHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusBadGateway)
-	w.Write([]byte("second gandler"))
+	w.Write([]byte("second handler"))
 }
 
 func main() {
