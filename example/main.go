@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/rammyblog/logviz"
 )
@@ -11,9 +12,9 @@ import (
 // Example handler
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
-	// time.Sleep(2.455 * time.Millisecond)
+	time.Sleep(2 * time.Millisecond)
 	w.WriteHeader(http.StatusBadGateway)
-	w.Write([]byte("Desewa, Aduke Ade"))
+	w.Write([]byte("Hello world"))
 }
 
 func SecondHandler(w http.ResponseWriter, r *http.Request) {
@@ -38,9 +39,9 @@ func main() {
 		fmt.Println(err)
 	}
 	reqLogger.Serve(":5009")
-	// Register the Logger middleware
+
 	mux.Handle("/", reqLogger.Logger(http.HandlerFunc(HelloHandler)))
-	mux.Handle("/rammy", reqLogger.Logger(http.HandlerFunc(SecondHandler)))
+	mux.Handle("/second", reqLogger.Logger(http.HandlerFunc(SecondHandler)))
 
 	// Start the server
 	log.Println("Server started on :8080")
