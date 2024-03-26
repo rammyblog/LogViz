@@ -2,9 +2,6 @@
 
 This Go package offers a request logging and viewing system designed for web applications built with frameworks like Chi or Gin. It enables developers to log and review HTTP requests sent to their applications, aiding in debugging and monitoring processes.
 
-<img src="https://github.com/rammyblog/portfolio-v2/assets/36502131/f907193e-66f4-41d0-bf56-0b8dca34d1eb"/>
-
-
 ![Logviz](https://github.com/rammyblog/portfolio-v2/assets/36502131/f907193e-66f4-41d0-bf56-0b8dca34d1eb)
 
 ## Table of Contents
