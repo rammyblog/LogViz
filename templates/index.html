@@ -373,8 +373,8 @@
       </div>
     </div>
 
-    <div class="position-relative">
-      <div class="position-absolute top-0 start-50 translate-middle">
+    <div class="">
+      <div class="bottom-div">
         Built with 💓 By
         <a href="https://tundeonasanya.dev/">Babatunde Onasanya</a>
       </div>
@@ -391,42 +391,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
     <script>
-      // Check if the user has scrolled to the bottom of the window
-      function isBottomOfPage() {
-        // Get the height of the document
-        const docHeight = Math.max(
-          document.body.scrollHeight,
-          document.documentElement.scrollHeight,
-          document.body.offsetHeight,
-          document.documentElement.offsetHeight,
-          document.body.clientHeight,
-          document.documentElement.clientHeight
-        );
+      window.onscroll = function (ev) {
+        if (
+          document.documentElement.scrollTop + window.innerHeight ===
+          document.documentElement.offsetHeight
+        ) {
 
-        // Get the current scroll position
-        const scrollTop =
-          window.pageYOffset ||
-          document.documentElement.scrollTop ||
-          document.body.scrollTop;
-
-        // Get the height of the viewport
-        const viewportHeight =
-          window.innerHeight ||
-          document.documentElement.clientHeight ||
-          document.body.clientHeight;
-
-        // Check if we are at the bottom of the page
-        return docHeight - scrollTop <= viewportHeight;
-      }
-
-      // Example usage:
-      window.addEventListener('scroll', function () {
-        if (isBottomOfPage()) {
-          console.log('You have reached the bottom of the page!');
-          // Perform actions such as loading more data
-          Alpine.store('state').loadMore();
+          // Delay the call to loadMore() by 1 second
+          setTimeout(function () {
+            Alpine.store('state').loadMore();
+          }, 1000);
         }
-      });
+      };
     </script>
   </body>
 </html>

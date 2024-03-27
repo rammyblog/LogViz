@@ -11,6 +11,7 @@ document.addEventListener('alpine:init', () => {
     isMethodTypeOpen: false,
     isLoading: false,
     currentLog: {},
+    lastId: null,
     fetchLogs: function () {
       fetch('/logs?lastId=0')
         .then((response) => response.json())
@@ -48,6 +49,13 @@ document.addEventListener('alpine:init', () => {
       this.isLoading = true;
       const lastItem = this.data[this.data.length - 1];
       const lastId = lastItem ? lastItem.id : '0';
+
+      if (this.lastId === lastId) {
+        this.isLoading = false;
+        return;
+      }
+      this.lastId = lastId;
+
       fetch(
         '/logs?lastId=' +
           lastId +
@@ -62,6 +70,7 @@ document.addEventListener('alpine:init', () => {
             this.isLoading = false;
             return;
           }
+          console.log(data);
           this.data = this.data.concat(data);
           this.isLoading = false;
         });

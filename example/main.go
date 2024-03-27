@@ -13,7 +13,7 @@ import (
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
 	time.Sleep(2 * time.Millisecond)
-	w.WriteHeader(http.StatusBadGateway)
+	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Hello world"))
 }
 

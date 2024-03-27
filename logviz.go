@@ -328,8 +328,6 @@ func getClientIP(r *http.Request) string {
 	return strings.Split(r.RemoteAddr, ":")[0]
 }
 
-
-
 //go:embed templates
 var templateFS embed.FS
 
