@@ -2,7 +2,7 @@
 
 This Go package offers a request logging and viewing system designed for web applications built with frameworks like Chi or Gin. It enables developers to log and review HTTP requests sent to their applications, aiding in debugging and monitoring processes.
 
-![Logviz](https://github.com/rammyblog/portfolio-v2/assets/36502131/f907193e-66f4-41d0-bf56-0b8dca34d1eb)
+![Logviz](https://res.cloudinary.com/rammy/image/upload/v1711575024/logwiz.png)
 
 ## Table of Contents
 
@@ -19,7 +19,7 @@ Run the following command to install Horus on your project:
 go get github.com/rammyblog/logviz
 ```
 
-![logviz2](https://github.com/rammyblog/portfolio-v2/assets/36502131/c3511846-7d74-4dc1-aeb9-735f9771e0f3)
+![logviz2](https://res.cloudinary.com/rammy/image/upload/v1711575024/logwiz2.png)
 
 
 ## Usage
